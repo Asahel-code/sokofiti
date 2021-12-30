@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 
-class AdminController extends Controller
+class ManageCategoryController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -25,7 +26,7 @@ class AdminController extends Controller
     public function index()
     {
         $categories = Category::with('ads')->get();
-        return view('layouts/admin/category', ['categories' => $categories]);
+        return view('layouts.admin.category', ['categories' => $categories]);
     }
 
     /**
@@ -35,7 +36,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        return view('layouts/admin/post-category');
+        return view('layouts.admin.post-category');
     }
 
     /**
@@ -70,8 +71,9 @@ class AdminController extends Controller
         $category->image = $newImage;
         $category->save();
 
-        return redirect()->route('')->withSuccess('A new category has been added successfully');
+        return redirect()->route('admin_category.index')->withSuccess('A new category has been added successfully');
     }
+
     /**
      * Display the specified resource.
      *
@@ -91,7 +93,9 @@ class AdminController extends Controller
      */
     public function edit($id)
     {
-        //
+        $category = Category::where('id', $id)->first();
+
+        return view('layouts.admin.edit-category', ['category' => $category]);
     }
 
     /**
@@ -103,7 +107,31 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //Validation ruless
+        $request->validate([
+            'categoryname' => 'required',
+            'image' => 'required'
+        ]);
+
+        $name = $request->categoryname;
+        $slug = $name;
+        $image = $request->image;
+
+        $imageName = $image->getClientOriginalName();
+        // $size = $image->getSize();
+        // $ext = $image->getClientOriginalExtension();
+        $newImage = time() . $imageName;
+        $path = "storage/uploads";
+        $image->move($path, $newImage);
+
+
+        Category::where('id', $id)->update([
+            'name' => $name,
+            'slug' => $slug,
+            'image' => $newImage
+        ]);
+
+        return redirect()->route('admin_category.index')->withSuccess('A category has been updated successfully');
     }
 
     /**
@@ -114,6 +142,6 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        //
+        
     }
 }

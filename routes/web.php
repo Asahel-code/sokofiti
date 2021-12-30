@@ -1,10 +1,14 @@
 <?php
 
-use App\Http\Controllers\AdminController;
+
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Basecontroller;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Admin\ManageCategoryController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,32 +23,42 @@ use App\Http\Controllers\CategoryController;
 
 Route::get('/', [Homecontroller::class, 'index']);
 
-// Route::get('/register', [Basecontroller::class, 'register'])->name('register');
-
-// Route::post('/save', [Basecontroller::class, 'loadIn'])->name('enter');
-
-// Route::get('/login', [Basecontroller::class, 'login'])->name('login');
-
-// Route::post('/check', [Basecontroller::class, 'check'])->name('check');
-
-// Route::get('/logout', [Basecontroller::class, 'logout'])->name('logout');
-
-
-Route::get('/product-category', [CategoryController::class, 'index'])->name('category');
-Route::get('/details', [CategoryController::class, 'show'])->name('ad-details');
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-
 //Authentication routes
-Auth::routes();
+Auth::routes(['verify' => true]);
 
+//Email verification routes
+Route::get('/email/verify', function () {
+    return view('auth.verify');
+})->middleware('auth')->name('verification.notice');
 
-Route::group(['middleware' => ['auth']], function () {
-    Route::get('/post-ads', [CategoryController::class, 'create'])->name('post-ads');
-    Route::get('/profile', [Basecontroller::class, 'profile'])->name('profile');
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
 
-    //Admin routes
-    Route::get('/category', [AdminController::class, 'index']);
-    Route::get('/post-category', [AdminController::class, 'create']);
+    return redirect('/');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+//Search route
+Route::get('/search_results', [Homecontroller::class, 'search'])->name('ad-search');
+
+//logged in users route
+Route::middleware(['auth'])->group(function () {
+    Route::get('/post-ads', [CategoryController::class, 'create'])->name('ad.create');
+    Route::post('/save',  [CategoryController::class, 'store'])->middleware('verified')->name('ad.store');
+    Route::put('/update',  [CategoryController::class, 'update'])->middleware('verified')->name('ad.update');
+    Route::get('/ads/{ad}/edit',  [CategoryController::class, 'store'])->middleware('verified')->name('ad.edit');
+    Route::delete('/ads/{ads}', [CategoryController::class, 'delete'])->middleware('verified')->name('ad.destroy');
+    Route::resource('account', ProfileController::class);
 });
+//Admin routes
+Route::middleware(['auth', 'isAdmin'])->group(function () {
+    Route::resource('admin_category', ManageCategoryController::class);
+});
+
+Route::get('/{category_slug}', [CategoryController::class, 'index'])->name('category.name');
+Route::get('/{category_slug}/{slug}', [CategoryController::class, 'show'])->name('ad.details');

@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Tailwind css -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
+    @livewireStyles
 </head>
 
 <body>
@@ -37,12 +37,13 @@
             <div class="navbar">
                 <div class="logo">
                     <h1><a href="/">sokofiti</a></h1>
-                    <span>We connect you to whatever you what from jobs to apartments vehicles and many more come and explore more</span>
+                    <span>We connect you to whatever you want from jobs to apartments vehicles and many more come and explore more</span>
                 </div>
 
                 <div class="links">
                     <nav>
                         <ul class="navbar-nav ml-auto">
+                            <li><a href="/#about">About us</a></li>
                             <!-- Authentication Links -->
                             @guest
                             @if (Route::has('login'))
@@ -59,26 +60,33 @@
                             </li> -->
                             @endif
                             @else
-                            <div>
-                                <img class="w-20 h-20 rounded-full" src="{{asset('assets/images/default.jpeg')}}" alt="" />
-                            </div>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="{{route('profile')}}">
+                            <li class="nav-item dropdown  nav-item">
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle text-dark" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
-
-                                <!-- <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                <div class="dropdown-menu dropdown-menu-center nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
+                                    <div class="dropdown-item">
+                                        @if(Auth::user()->role_as == 0)
+                                        <a href="{{route('account.index')}}"><i class="bi bi-person-fill mr-2"></i>Account</a>
+                                        @elseif(Auth::user()->role_as == 1)
+                                        <a href="{{route('admin_category.index')}}"><i class="bi bi-person-fill mr-2"></i>Account</a>
+                                        @endif
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <a href="{{ route('logout') }}" onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
+                                            <i class="fa-solid fa-power-off mr-2"></i> {{ __('Logout') }}
+                                        </a>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div> -->
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                            @csrf
+                                        </form>
+                                    </div>
+
+                                </div>
+
                             </li>
-                            <li><a class="bg-yellow-700 px-4 text-white rounded-lg hover:bg-yellow-600 hover:text-white" href="{{route('post-ads')}}">Post-ad</a></li>
+                            <li><a class="bg-yellow-700 px-4 text-white rounded-lg hover:bg-yellow-600 hover:text-white" href="{{route('ad.create')}}">Post-ad</a></li>
                             @endguest
                         </ul>
                         <!-- <ul>
@@ -92,14 +100,7 @@
             <div class="underline"></div>
             <div class="categories-links">
                 <ul>
-                    <li><a href="{{route('category')}}">Apartment</a></li>
-                    <li><a href="{{route('category')}}">Vehicles</a></li>
-                    <li><a href="{{route('category')}}">Phones &amp; laptops</a></li>
-                    <li><a href="{{route('category')}}">Services</a></li>
-                    <li><a href="{{route('category')}}">Jobs</a></li>
-                    <li><a href="{{route('category')}}">Electronics</a></li>
-                    <li><a href="{{route('category')}}">Food</a></li>
-                    <li><a href="{{route('category')}}">Books</a></li>
+                    @yield('navigation')
                 </ul>
             </div>
         </header>
@@ -131,14 +132,7 @@
                 <div class=categories-links>
                     <h2 class="text-3xl font-semibold">Categories</h2>
                     <div class="links pt-4">
-                        <li><a href="{{route('category')}}">Apartments</a></li>
-                        <li><a href="{{route('category')}}">Vehicles</a></li>
-                        <li><a href="{{route('category')}}">Jobs</a></li>
-                        <li><a href="{{route('category')}}">Food</a></li>
-                        <li><a href="{{route('category')}}">Electronics</a></li>
-                        <li><a href="{{route('category')}}">Services</a></li>
-                        <li><a href="{{route('category')}}">Phone &amp; laptops</a></li>
-                        <li><a href="{{route('category')}}">Books</a></li>
+                        @yield('navigation')
                     </div>
                 </div>
                 <div class="Newsletter">
@@ -154,10 +148,10 @@
                     <p>All rights reserved.&copy;2021 Sokofiti</p>
                 </div>
                 <div class="social-media-links">
-                    <li><a><i class="bi bi-facebook"></i></a></li>
-                    <li><a><i class="bi bi-twitter"></i></a></li>
-                    <li><a><i class="bi bi-instagram"></i></a></li>
-                    <li><a><i class="bi bi-linkedin"></i></a></li>
+                    <li><a href="https://www.facebook.com"><i class="bi bi-facebook"></i></a></li>
+                    <li><a href="https://www.twitter.com"><i class="bi bi-twitter"></i></a></li>
+                    <li><a href="https://www.instagram.com"><i class="bi bi-instagram"></i></a></li>
+                    <li><a href="https://www.linkedin.com"><i class="bi bi-linkedin"></i></a></li>
                 </div>
             </div>
         </section>
@@ -171,7 +165,7 @@
     <script type="text/javascript" src="{{asset('assets/js/jquery.counterup.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('assets/js/jasny-bootstrap.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('assets/js/bootstrap-select.min.js')}}"></script>
-
+    @livewireScripts
 </body>
 
 </html>

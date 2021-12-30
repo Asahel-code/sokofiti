@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Price extends Model
 {
     use HasFactory;
+
+    protected $table = "prices";
+
+    public function ads()
+    {
+        return $this->hasMany(Ads::class, 'price_id');
+    }
 }

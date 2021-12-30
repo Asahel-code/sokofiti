@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Ads;
 
 class Basecontroller extends Controller
 {
@@ -25,7 +26,10 @@ class Basecontroller extends Controller
      */
     function profile()
     {
-        return view('layouts.profile');
+        $user_id = Auth::id();
+
+        $ad = Ads::where('user_id', $user_id)->with('category')->first();
+        return view('layouts.profile', ['ad' => $ad]);
     }
 
     // function register()

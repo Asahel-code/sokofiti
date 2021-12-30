@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Models\Price;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class PricesFactory extends Factory
+class PriceFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.

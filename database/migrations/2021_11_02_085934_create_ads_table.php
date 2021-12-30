@@ -17,9 +17,8 @@ class CreateAdsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
-            $table->string('description');
-            $table->string('ad_type');
-            $table->string('price')->nullable();
+            $table->text('description');
+            $table->decimal('price')->nullable();
             $table->integer('price_negotiable')->nullable();
             $table->enum('sell_options', ['deal', 'exchange', 'free'])->nullable();
             $table->string('Ad_image_0');
@@ -30,13 +29,12 @@ class CreateAdsTable extends Migration
             $table->string('contactemail');
             $table->integer('contactnumber');
             $table->integer('hide_number')->nullable();
-            $table->string('product_location');
-            $table->integer('count');
+            $table->string('location');
             $table->bigInteger('category_id')->unsigned()->nullable();
-            $table->bigInteger("price_id")->unsigned()->nullable();
+            $table->bigInteger('user_id')->unsigned();
             $table->timestamps();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->foreign('price_id')->references('id')->on('prices')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

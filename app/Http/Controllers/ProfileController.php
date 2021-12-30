@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Ads;
 
-class AdminController extends Controller
+class ProfileController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -14,7 +15,7 @@ class AdminController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('isAdmin');
+        $this->middleware('auth');
     }
 
     /**
@@ -24,8 +25,10 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $categories = Category::with('ads')->get();
-        return view('layouts/admin/category', ['categories' => $categories]);
+        $user_id = Auth::id();
+
+        $ads = Ads::where('user_id', $user_id)->with('category')->get();
+        return view('layouts.profile', ['ads' => $ads]);
     }
 
     /**
@@ -35,7 +38,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        return view('layouts/admin/post-category');
+        //
     }
 
     /**
@@ -46,32 +49,9 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        //Validation ruless
-        $request->validate([
-            'categoryname' => 'required',
-            'image' => 'required'
-        ]);
-
-        $name = $request->categoryname;
-        $slug = $name;
-        $image = $request->image;
-
-        $imageName = $image->getClientOriginalName();
-        // $size = $image->getSize();
-        // $ext = $image->getClientOriginalExtension();
-        $newImage = time() . $imageName;
-        $path = "storage/uploads";
-        $image->move($path, $newImage);
-
-
-        $category = new Category();
-        $category->name = $name;
-        $category->slug = $slug;
-        $category->image = $newImage;
-        $category->save();
-
-        return redirect()->route('')->withSuccess('A new category has been added successfully');
+        //
     }
+
     /**
      * Display the specified resource.
      *

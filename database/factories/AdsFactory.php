@@ -28,7 +28,6 @@ class AdsFactory extends Factory
             'name' => $ad_name,
             'slug' => $slug,
             'description' => $this->faker->text(500),
-            'ad_type' => $this->faker->text(5),
             'location' => $this->faker->text(10),
             'price' => $this->faker->numberBetween(10, 500),
             'Ad_image_0' => 'img' . $this->faker->unique()->numberBetween(1, 14) . '.jpg',
@@ -36,9 +35,8 @@ class AdsFactory extends Factory
             'contactname' => $this->faker->text(10),
             'contactemail' => $this->faker->safeEmail,
             'contactnumber' => '0763513633',
-            'count' => 0,
             'category_id' => $this->faker->numberBetween(1, 8),
-            'price_id' => $this->faker->numberBetween(1, 2)
+            'user_id' => $this->faker->numberBetween(1, 4)
         ];
     }
 }
